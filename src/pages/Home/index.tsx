@@ -18,7 +18,8 @@ import profileImage from "../../image/문채현2.jpg"; // 이미지 가져오기
 import HomeChatContainer from "../../components/HomeChatContainer";
 import { useContext, useEffect, useState } from "react";
 import HomeCreateRoomModal from "../../components/HomeCreateRoomModal";
-import { ModalContext } from "../../App";
+import { ChatRoomListContext, ModalContext } from "../../App";
+import axios from "axios";
 
 const Home = () => {
   const [userName, setUserName] = useState<string>();
@@ -30,11 +31,32 @@ const Home = () => {
   }
   const { modal, setModal } = modalContext;
 
+  // ChatRoomListContext 가져오기
+  const chatRoomListContext = useContext(ChatRoomListContext);
+  if (!chatRoomListContext) {
+    throw new Error("ChatRoomListContext.Provider 없음");
+  }
+  const { chatRoomList, setChatRoomList } = chatRoomListContext;
+
   useEffect(() => {
     const localstorageUserName = localStorage.getItem("chatBoxUserName");
     if (localstorageUserName) {
       setUserName(localstorageUserName);
     }
+  }, []);
+
+  const loadChatRoomList = async () => {
+    try {
+      const response = await axios.get(`http://localhost:8080/chat/rooms`);
+      setChatRoomList(response.data);
+      setModal(false);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    loadChatRoomList();
   }, []);
 
   const handleModal = () => {
@@ -54,20 +76,17 @@ const Home = () => {
             </Profile>
             <Subtitle>CURRENT CHAT ROOM LIST</Subtitle>
             <ChatRoomList>
-              <ChatRoomItem>
-                <img src={profileImage} alt="Chat Room" />
-                <div>
-                  <p className="chatRoomItemTitle">풋살할사람모여라</p>
-                  <ChatRoomItemText>그래 내일 봐!</ChatRoomItemText>
-                </div>
-              </ChatRoomItem>
-              <ChatRoomItem>
-                <img src={profileImage} alt="Chat Room" />
-                <div>
-                  <p className="chatRoomItemTitle">풋살할사람모여라</p>
-                  <ChatRoomItemText>나 할래 나나나나~</ChatRoomItemText>
-                </div>
-              </ChatRoomItem>
+              {chatRoomList.map((item: ChatRoomItemType, idx) => (
+                <ChatRoomItem key={item.roomId}>
+                  <img src={profileImage} alt="Chat Room" />
+                  <div>
+                    <p className="chatRoomItemTitle">{item.name}</p>
+                    <ChatRoomItemText>
+                      {item.roomUserCnt} users
+                    </ChatRoomItemText>
+                  </div>
+                </ChatRoomItem>
+              ))}
             </ChatRoomList>
             <ButtonWrapper>
               <StyledButton text="채팅방 만들기" onClick={handleModal} />
@@ -79,7 +98,7 @@ const Home = () => {
           <HomeChatContainer />
         </RightCard>
       </Container>
-      {modal ? <HomeCreateRoomModal /> : ""}
+      {modal ? <HomeCreateRoomModal /> : null}
     </>
   );
 };

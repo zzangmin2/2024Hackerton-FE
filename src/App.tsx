@@ -2,6 +2,11 @@ import { createContext, useState } from "react";
 import "./App.css";
 import { Outlet } from "react-router-dom";
 import styled from "styled-components";
+import {
+  ChatRoomItemType,
+  ChatRoomListContextType,
+  ModalContextType,
+} from "./typings/db";
 
 const Background = styled.div`
   width: 100vw;
@@ -10,26 +15,27 @@ const Background = styled.div`
   box-sizing: border-box;
 `;
 
-interface ModalContextType {
-  modal: boolean;
-  setModal: (modal: boolean) => void;
-}
-
 const ModalContext = createContext<ModalContextType | undefined>(undefined);
+const ChatRoomListContext = createContext<ChatRoomListContextType | undefined>(
+  undefined
+);
 
 function App() {
   const [modal, setModal] = useState<boolean>(false);
+  const [chatRoomList, setChatRoomList] = useState<ChatRoomItemType[]>([]);
 
   return (
     <>
-      <ModalContext.Provider value={{ modal, setModal }}>
-        <Background>
-          <Outlet />
-        </Background>
-      </ModalContext.Provider>
+      <ChatRoomListContext.Provider value={{ chatRoomList, setChatRoomList }}>
+        <ModalContext.Provider value={{ modal, setModal }}>
+          <Background>
+            <Outlet />
+          </Background>
+        </ModalContext.Provider>
+      </ChatRoomListContext.Provider>
     </>
   );
 }
 
-export { ModalContext };
+export { ModalContext, ChatRoomListContext };
 export default App;

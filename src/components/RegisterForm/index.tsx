@@ -1,16 +1,8 @@
+import { HomeProps } from "../../typings/db";
 import StyledButton from "../StyledButton";
 import { ButtonWrapper, Form, Input, InputRow, Title } from "./styles";
 
-interface Props {
-  handleSubmit: (event: React.FormEvent<HTMLFormElement>) => void;
-  title: string;
-  placeholder: string;
-  value: string;
-  setValue: (newValue: string) => void;
-  buttonText: string;
-}
-
-const RegisterForm: React.FC<Props> = ({
+const RegisterForm: React.FC<HomeProps> = ({
   handleSubmit,
   title,
   placeholder,
