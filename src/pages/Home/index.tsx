@@ -1,7 +1,11 @@
-import React from "react";
+import { Sample } from "./styles";
 
 const Home = () => {
-  return <>홈페이징.</>;
+  return (
+    <>
+      <Sample>홈 화면입니다.</Sample>
+    </>
+  );
 };
 
 export default Home;
