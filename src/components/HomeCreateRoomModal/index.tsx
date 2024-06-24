@@ -2,7 +2,7 @@ import { useContext, useState } from "react";
 import RegisterForm from "../RegisterForm";
 import styled from "styled-components";
 import axios from "axios";
-import { ModalContext } from "../../App";
+import { ChatRoomListContext, ModalContext } from "../../App";
 
 const ModalBackground = styled.div`
   position: fixed;
@@ -26,15 +26,27 @@ const HomeCreateRoomModal = () => {
   }
   const { modal, setModal } = modalContext;
 
+  // ChatRoomListContext 가져오기
+  const chatRoomListContext = useContext(ChatRoomListContext);
+  if (!chatRoomListContext) {
+    throw new Error("ChatRoomListContext.Provider 없음");
+  }
+  const { chatRoomList, setChatRoomList } = chatRoomListContext;
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (roomname.length < 2) {
+      alert("최소 2글자 이상 입력해주세요.");
+      return;
+    }
 
     try {
       const response = await axios.post(
         `http://localhost:8080/chat/room?name=${roomname}`
       );
       console.log("방 생성", response.data);
-      setModal(!modal);
+      setChatRoomList([...chatRoomList, response.data]);
+      setModal(false);
     } catch (error) {
       console.error(error);
     }

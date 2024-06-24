@@ -1,6 +1,17 @@
 import { HomeProps } from "../../typings/db";
 import StyledButton from "../StyledButton";
-import { ButtonWrapper, Form, Input, InputRow, Title } from "./styles";
+import {
+  ButtonWrapper,
+  CloseButtonWrap,
+  Form,
+  Input,
+  InputRow,
+  Title,
+} from "./styles";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faXmark } from "@fortawesome/free-solid-svg-icons";
+import { useContext } from "react";
+import { ModalContext } from "../../App";
 
 const RegisterForm: React.FC<HomeProps> = ({
   handleSubmit,
@@ -10,9 +21,24 @@ const RegisterForm: React.FC<HomeProps> = ({
   setValue,
   buttonText,
 }) => {
+  // modalContext 가져오기
+  const modalContext = useContext(ModalContext);
+  if (!modalContext) {
+    throw new Error("ModalContext.Provider 없음");
+  }
+  const { setModal } = modalContext;
   return (
     <>
       <Form>
+        {title === "방 생성하기" ? (
+          <CloseButtonWrap>
+            <button onClick={() => setModal(false)}>
+              <FontAwesomeIcon icon={faXmark} />
+            </button>
+          </CloseButtonWrap>
+        ) : (
+          <></>
+        )}
         <Title>{title}</Title>
         <InputRow>
           <Input
