@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled from "styled-components";
 
 // ----------index.tsx style-----------------
 // 사용자 입력 Form
@@ -9,7 +9,7 @@ export const Form = styled.form`
   justify-content: center;
   width: 515px;
   height: 351px;
-  background: #FFFFFF;
+  background: #ffffff;
   border-radius: 10px;
   box-shadow: 0 48px 100px rgba(17, 12, 46, 0.05);
   position: absolute;
@@ -30,9 +30,9 @@ export const CheckButton = styled.button`
   width: 96px;
   height: 60px;
   margin-left: 12px;
-  background-color: #FFFFFF;
-  color: #00A6DD;
-  border: 1px solid #00A6DD;
+  background-color: #ffffff;
+  color: #00a6dd;
+  border: 1px solid #00a6dd;
   border-radius: 10px;
   cursor: pointer;
   font-size: 18px;
@@ -41,7 +41,7 @@ export const CheckButton = styled.button`
   align-items: center;
   padding: 10px 5px;
   &:hover {
-    background-color: #00A6DD;
+    background-color: #00a6dd;
     color: white;
   }
 `;
@@ -50,41 +50,45 @@ export const CheckButton = styled.button`
 export const Input = styled.input`
   width: 276px;
   height: 57px;
-  border: 1px solid #F7F7F7;
+  border: 1px solid #f7f7f7;
   border-radius: 10px;
   background-color: white;
   color: black;
   font-size: 18px;
   text-align: center;
   &::placeholder {
-    color: #BABABA;
+    color: #bababa;
     font-size: 18px;
     text-align: center;
   }
 `;
 
-// 시작하기 버튼
-export const Button = styled.button`
-  width: 386px;
-  height: 60px;
-  background-color: #00A6DD;
-  color: white;
-  border-radius: 10px;
-  cursor: pointer;
-  font-size: 18px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-weight: 700;
-  &:hover {
-    background-color: #0056b3;
-  }
-  aria-label: "시작하기";
-`;
+// // 시작하기 버튼
+// export const Button = styled.button`
+//   width: 386px;
+//   height: 60px;
+//   background-color: #00a6dd;
+//   color: white;
+//   border-radius: 10px;
+//   cursor: pointer;
+//   font-size: 18px;
+//   display: flex;
+//   justify-content: center;
+//   align-items: center;
+//   font-weight: 700;
+//   &:hover {
+//     background-color: #0056b3;
+//   }
+//   aria-label: "시작하기";
+// `;
 
 // DAELIM CHAT
 export const Title = styled.h1`
   font-size: 1.5em;
-  color: #00A6DD;
+  color: #00a6dd;
   margin-bottom: 40px;
+`;
+
+export const ButtonWrapper = styled.div`
+  width: 390px;
 `;
