@@ -1,10 +1,17 @@
-import React, { useState } from 'react';
-import { Form, InputRow, Input, CheckButton, Title } from './styles';
-import StyledButton from '../../components/StyledButton'; // StyledButton 경로
-import { useNavigate } from 'react-router-dom'; // useNavigate 훅 임포트
+import React, { useState } from "react";
+import {
+  Form,
+  InputRow,
+  Input,
+  CheckButton,
+  Title,
+  ButtonWrapper,
+} from "./styles";
+import StyledButton from "../../components/StyledButton"; // StyledButton 경로
+import { useNavigate } from "react-router-dom"; // useNavigate 훅 임포트
 
 const UserRegister = () => {
-  const [username, setUsername] = useState('');
+  const [username, setUsername] = useState("");
   const navigate = useNavigate(); // useNavigate 훅 사용
 
   const handleCheckUsername = () => {
@@ -14,7 +21,7 @@ const UserRegister = () => {
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     console.log("Submitted Username:", username);
-    navigate('/index2'); // 폼 제출 후 페이지 이동
+    navigate("/index2"); // 폼 제출 후 페이지 이동
   };
 
   return (
@@ -29,7 +36,10 @@ const UserRegister = () => {
         />
         <CheckButton onClick={handleCheckUsername}>중복확인</CheckButton>
       </InputRow>
-      <StyledButton text="시작하기" to="/user-home" /> {/* 이동할 경로 설정 */}
+      <ButtonWrapper>
+        <StyledButton text="시작하기" to="/user-home" />{" "}
+        {/* 이동할 경로 설정 */}
+      </ButtonWrapper>
     </Form>
   );
 };

@@ -1,6 +1,6 @@
 // components/StyledButton.tsx
-import styled from 'styled-components';
-import { useNavigate } from 'react-router-dom';
+import styled from "styled-components";
+import { useNavigate } from "react-router-dom";
 
 interface ButtonProps {
   text: string;
@@ -8,9 +8,10 @@ interface ButtonProps {
 }
 
 const ButtonStyle = styled.button`
-  width: 386px;
+  /* width: 386px; */
+  width: 100%;
   height: 60px;
-  background-color: #00A6DD;
+  background-color: #00a6dd;
   color: white;
   border: none;
   border-radius: 10px;
