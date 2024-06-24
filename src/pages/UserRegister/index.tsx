@@ -1,13 +1,4 @@
 import React, { useState } from "react";
-// import {
-//   Form,
-//   InputRow,
-//   Input,
-//   CheckButton,
-//   Title,
-//   ButtonWrapper,
-// } from "./styles";
-// import StyledButton from "../../components/StyledButton"; // StyledButton 경로
 import { useNavigate } from "react-router-dom"; // useNavigate 훅 임포트
 import RegisterForm from "../../components/RegisterForm";
 

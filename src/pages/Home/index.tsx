@@ -16,12 +16,19 @@ import {
 import profileImage from "../../image/문채현2.jpg"; // 이미지 가져오기
 // import HomeGreetingContainer from "../../components/HomeGreetingContainer";
 import HomeChatContainer from "../../components/HomeChatContainer";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import HomeCreateRoomModal from "../../components/HomeCreateRoomModal";
+import { ModalContext } from "../../App";
 
 const Home = () => {
   const [userName, setUserName] = useState<string>();
-  const [modal, setModal] = useState<boolean>(false);
+
+  // modalContext 가져오기
+  const modalContext = useContext(ModalContext);
+  if (!modalContext) {
+    throw new Error("ModalContext.Provider 없음");
+  }
+  const { modal, setModal } = modalContext;
 
   useEffect(() => {
     const localstorageUserName = localStorage.getItem("chatBoxUserName");

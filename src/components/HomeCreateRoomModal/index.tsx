@@ -1,6 +1,8 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import RegisterForm from "../RegisterForm";
-import { styled } from "styled-components";
+import styled from "styled-components";
+import axios from "axios";
+import { ModalContext } from "../../App";
 
 const ModalBackground = styled.div`
   position: fixed;
@@ -17,9 +19,25 @@ const ModalBackground = styled.div`
 const HomeCreateRoomModal = () => {
   const [roomname, setRoomname] = useState<string>("");
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  // modalContext 가져오기
+  const modalContext = useContext(ModalContext);
+  if (!modalContext) {
+    throw new Error("ModalContext.Provider 없음");
+  }
+  const { modal, setModal } = modalContext;
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    alert(roomname);
+
+    try {
+      const response = await axios.post(
+        `http://localhost:8080/chat/room?name=${roomname}`
+      );
+      console.log("방 생성", response.data);
+      setModal(!modal);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (
@@ -33,6 +51,13 @@ const HomeCreateRoomModal = () => {
           setValue={setRoomname}
           buttonText="만들기"
         />
+        <button
+          onClick={() => {
+            setModal(!modal);
+          }}
+        >
+          닫기
+        </button>
       </ModalBackground>
     </>
   );
