@@ -55,3 +55,14 @@ export interface ButtonProps {
     | MouseEventHandler<HTMLButtonElement>
     | ((event: React.FormEvent<HTMLFormElement>) => void);
 }
+
+/**
+ * websocket으로 주고받는 데이터
+ */
+export interface wsMessage {
+  type: string;
+  roomId: string;
+  sender: string;
+  message: string;
+  time: string;
+}

@@ -1,13 +1,7 @@
 import {
   Container,
   Header,
-  //   MessageContainer,
-  //   Message,
-  //   MessageContent,
   MessageText,
-  //   Avatar,
-  //   TextBubble,
-  //   Timestamp,
   InputContainer,
   Input,
   SendButton,
@@ -18,13 +12,18 @@ import profileImage from "../../image/문채현2.jpg";
 import { faPaperPlane } from "@fortawesome/free-solid-svg-icons";
 import { useParams } from "react-router-dom";
 import { ChatRoomDetailContext, ChatRoomListContext } from "../../App";
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import axios from "axios";
 import { ChatRoomItemType } from "../../typings/db";
 import Chat from "../Chat";
+import useWebSocket from "../../hook/useWebSocket";
 
 const HomeChatContainer = () => {
+  const { messages, sendMessage } = useWebSocket("ws://localhost:8080/ws/chat");
   const { roomIndex } = useParams();
+  const [inputValue, setInputValue] = useState("");
+  const hasEntered = useRef(false);
+
   let roomInfo: ChatRoomItemType;
 
   // ChatRoomListContext 가져오기
@@ -55,14 +54,44 @@ const HomeChatContainer = () => {
         `http://localhost:8080/chat/room/${roomInfo.roomId}`
       );
       setChatRoomDetail(response.data);
+      hasEntered.current = false;
     } catch (error) {
       console.error(error);
     }
   };
 
   useEffect(() => {
-    loadChatInfo();
-  }, []);
+    if (chatRoomDetail && !hasEntered.current) {
+      const enterMessage = {
+        type: "ENTER",
+        roomId: chatRoomDetail.roomId,
+        sender: "프론트유저",
+        message: "",
+        time: new Date().toString(),
+      };
+
+      console.log(enterMessage);
+      sendMessage(enterMessage);
+      hasEntered.current = true;
+    }
+  }, [chatRoomDetail]);
+
+  const handleSendMessage = () => {
+    if (inputValue.trim() === "") return;
+    if (chatRoomDetail) {
+      const newMessage = {
+        type: "TALK",
+        roomId: chatRoomDetail.roomId,
+        sender: "프론트유저",
+        message: inputValue,
+        time: new Date().toString(),
+      };
+
+      console.log(newMessage);
+      sendMessage(newMessage);
+      setInputValue("");
+    }
+  };
 
   return (
     <Container>
@@ -72,10 +101,15 @@ const HomeChatContainer = () => {
           <p>{chatRoomDetail.name}</p>
         </MessageText>
       </Header>
-      <Chat />
+      <Chat messages={messages} />
       <InputContainer>
-        <Input type="text" placeholder="메시지를 입력해주세요" />
-        <SendButton>
+        <Input
+          type="text"
+          placeholder="메시지를 입력해주세요"
+          value={inputValue}
+          onChange={(e) => setInputValue(e.target.value)}
+        />
+        <SendButton onClick={handleSendMessage}>
           <SendIcon icon={faPaperPlane} />
         </SendButton>
       </InputContainer>

@@ -30,7 +30,7 @@ export const MessageContainer = styled.div`
 `;
 
 interface MessageProps {
-  isSender?: boolean;
+  issender?: string;
 }
 
 // 개별 메시지
@@ -38,8 +38,8 @@ export const Message = styled.div<MessageProps>`
   display: flex;
   align-items: flex-start;
   margin: 10px 0;
-  ${({ isSender }) =>
-    isSender &&
+  ${({ issender }) =>
+    issender === "true" &&
     `
     justify-content: flex-end;
   `}

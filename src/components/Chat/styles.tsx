@@ -1,31 +1,49 @@
 import styled from "styled-components";
 interface MessageProps {
-  isSender?: boolean;
+  issender?: string;
 }
 
 // 메시지들을 담는 컨테이너.
 export const MessageContainer = styled.div`
-  text-align: left;
   color: black;
-  flex: 1;
+  height: 30rem;
   padding: 10px;
   display: flex;
   flex-direction: column;
-  justify-content: flex-end;
+  overflow-y: auto;
+  overflow-x: hidden;
+  box-sizing: border-box;
+
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: #cbcbcb;
+    border-radius: 10px;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background: #818181;
+  }
 `;
 
 // 개별 메시지
 export const Message = styled.div<MessageProps>`
+  width: 100%;
+  height: 40px;
   display: flex;
   align-items: flex-start;
-  margin: 10px 0;
-  ${({ isSender }) =>
-    isSender &&
+  margin: 20px 0;
+  ${({ issender }) =>
+    issender === "true" &&
     `
+    margin: 6px 0;
     justify-content: flex-end;
   `}
 
   p {
+    text-align: start;
     font-weight: 700;
     margin: 0 0 5px 0; /* 상대방 이름과 메시지 사이의 간격을 증가 */
   }
@@ -43,6 +61,7 @@ export const MessageContent = styled.div`
 
 export const MessageText = styled.div`
   font-weight: 700;
+  font-size: 1rem;
   display: flex;
   align-items: center;
   margin-bottom: 10px;
@@ -59,8 +78,9 @@ export const Avatar = styled.img`
 
 //말풍선
 export const TextBubble = styled.div<MessageProps>`
-  background-color: ${(props) => (props.isSender ? "#00A6DD" : "#F7F7F7")};
-  color: ${(props) => (props.isSender ? "#FFF8F8" : "#000")};
+  background-color: ${({ issender }) =>
+    issender === "true" ? "#00A6DD" : "#F7F7F7"};
+  color: ${({ issender }) => (issender === "true" ? "#FFF8F8" : "#000")};
   padding: 12px;
   border-radius: 10px;
   font-size: 12px;
