@@ -12,6 +12,7 @@ const Background = styled.div`
   width: 100vw;
   height: 100vh;
   background-color: #fafafa;
+  overflow: hidden;
   box-sizing: border-box;
 `;
 

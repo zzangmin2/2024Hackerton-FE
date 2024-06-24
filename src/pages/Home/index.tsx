@@ -20,6 +20,7 @@ import { useContext, useEffect, useState } from "react";
 import HomeCreateRoomModal from "../../components/HomeCreateRoomModal";
 import { ChatRoomListContext, ModalContext } from "../../App";
 import axios from "axios";
+import { ChatRoomItemType } from "../../typings/db";
 
 const Home = () => {
   const [userName, setUserName] = useState<string>();
@@ -76,7 +77,7 @@ const Home = () => {
             </Profile>
             <Subtitle>CURRENT CHAT ROOM LIST</Subtitle>
             <ChatRoomList>
-              {chatRoomList.map((item: ChatRoomItemType, idx) => (
+              {chatRoomList.map((item: ChatRoomItemType) => (
                 <ChatRoomItem key={item.roomId}>
                   <img src={profileImage} alt="Chat Room" />
                   <div>

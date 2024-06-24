@@ -4,7 +4,7 @@ export interface ChatRoomItemType {
   roomId: string;
   name: string;
   roomUserCnt: number;
-  chatUserCnt: string[];
+  chatUserCnt?: string[];
 }
 
 export interface ModalContextType {

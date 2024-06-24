@@ -23,6 +23,7 @@ const ButtonStyle = styled.button`
   justify-content: center;
   align-items: center;
   font-weight: 700;
+
   &:hover {
     background-color: #0056b3;
   }
