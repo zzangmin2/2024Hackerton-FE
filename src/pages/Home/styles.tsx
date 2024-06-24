@@ -85,6 +85,7 @@ export const Profile = styled.div`
   flex-direction: row; // 가로 방향으로 정렬
   align-items: center; // 세로축 중앙 정렬
   margin-bottom: 40px; // 아래쪽 여백 설정
+  cursor: pointer;
 
   img {
     width: 80px; // 이미지 너비

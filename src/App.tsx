@@ -3,6 +3,7 @@ import "./App.css";
 import { Outlet } from "react-router-dom";
 import styled from "styled-components";
 import {
+  ChatRoomDetailContextType,
   ChatRoomItemType,
   ChatRoomListContextType,
   ModalContextType,
@@ -20,23 +21,36 @@ const ModalContext = createContext<ModalContextType | undefined>(undefined);
 const ChatRoomListContext = createContext<ChatRoomListContextType | undefined>(
   undefined
 );
+const ChatRoomDetailContext = createContext<
+  ChatRoomDetailContextType | undefined
+>(undefined);
 
 function App() {
   const [modal, setModal] = useState<boolean>(false);
   const [chatRoomList, setChatRoomList] = useState<ChatRoomItemType[]>([]);
+  const [chatRoomDetail, setChatRoomDetail] = useState<ChatRoomItemType>({
+    roomId: "",
+    name: "",
+    roomUserCnt: 0,
+    chatUserCnt: [],
+  });
 
   return (
     <>
       <ChatRoomListContext.Provider value={{ chatRoomList, setChatRoomList }}>
-        <ModalContext.Provider value={{ modal, setModal }}>
-          <Background>
-            <Outlet />
-          </Background>
-        </ModalContext.Provider>
+        <ChatRoomDetailContext.Provider
+          value={{ chatRoomDetail, setChatRoomDetail }}
+        >
+          <ModalContext.Provider value={{ modal, setModal }}>
+            <Background>
+              <Outlet />
+            </Background>
+          </ModalContext.Provider>
+        </ChatRoomDetailContext.Provider>
       </ChatRoomListContext.Provider>
     </>
   );
 }
 
-export { ModalContext, ChatRoomListContext };
+export { ModalContext, ChatRoomListContext, ChatRoomDetailContext };
 export default App;

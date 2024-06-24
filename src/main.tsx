@@ -5,6 +5,8 @@ import "./index.css";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import Home from "./pages/Home/index.tsx";
 import UserRegister from "./pages/UserRegister/index.tsx";
+import HomeGreetingContainer from "./components/HomeGreetingContainer/index.tsx";
+import HomeChatContainer from "./components/HomeChatContainer/index.tsx";
 
 const router = createBrowserRouter([
   {
@@ -14,6 +16,16 @@ const router = createBrowserRouter([
       {
         path: "/",
         element: <Home />,
+        children: [
+          {
+            path: "/intro",
+            element: <HomeGreetingContainer />,
+          },
+          {
+            path: "/chat/:roomIndex",
+            element: <HomeChatContainer />,
+          },
+        ],
       },
       {
         path: "/user-register",
