@@ -1,13 +1,13 @@
 import {
   Container,
   Header,
-  MessageContainer,
-  Message,
-  MessageContent,
+  //   MessageContainer,
+  //   Message,
+  //   MessageContent,
   MessageText,
-  Avatar,
-  TextBubble,
-  Timestamp,
+  //   Avatar,
+  //   TextBubble,
+  //   Timestamp,
   InputContainer,
   Input,
   SendButton,
@@ -21,11 +21,12 @@ import { ChatRoomDetailContext, ChatRoomListContext } from "../../App";
 import { useContext, useEffect } from "react";
 import axios from "axios";
 import { ChatRoomItemType } from "../../typings/db";
+import Chat from "../Chat";
 
 const HomeChatContainer = () => {
   const { roomIndex } = useParams();
-
   let roomInfo: ChatRoomItemType;
+
   // ChatRoomListContext 가져오기
   const chatRoomListContext = useContext(ChatRoomListContext);
   if (!chatRoomListContext) {
@@ -36,18 +37,22 @@ const HomeChatContainer = () => {
   // ChatRoomDetailContext 가져오기
   const chatRoomDetailContext = useContext(ChatRoomDetailContext);
   if (!chatRoomDetailContext) {
-    throw new Error("ChatRoomListContext.Provider 없음");
+    throw new Error("chatRoomDetailContext.Provider 없음");
   }
   const { chatRoomDetail, setChatRoomDetail } = chatRoomDetailContext;
 
-  if (roomIndex && chatRoomList.length >= 1) {
-    roomInfo = chatRoomList[parseInt(roomIndex)];
-  }
+  //페이지 이동할 때마다 roomInfo 수정하기
+  useEffect(() => {
+    if (roomIndex && chatRoomList.length >= 1) {
+      roomInfo = chatRoomList[parseInt(roomIndex)];
+      loadChatInfo();
+    }
+  }, [roomIndex, chatRoomList]);
 
-  const loadChatData = async () => {
+  const loadChatInfo = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:8080/chat/rooms/${roomInfo.roomId}`
+        `http://localhost:8080/chat/room/${roomInfo.roomId}`
       );
       setChatRoomDetail(response.data);
     } catch (error) {
@@ -56,7 +61,7 @@ const HomeChatContainer = () => {
   };
 
   useEffect(() => {
-    loadChatData();
+    loadChatInfo();
   }, []);
 
   return (
@@ -67,21 +72,7 @@ const HomeChatContainer = () => {
           <p>{chatRoomDetail.name}</p>
         </MessageText>
       </Header>
-      <MessageContainer>
-        <Timestamp>2024년 6월 23일</Timestamp>
-        <Message>
-          <Avatar src={profileImage} alt="avatar" />
-          <MessageContent>
-            <p>상대방누군가</p>
-            <TextBubble>상대방이 보낸 메세지</TextBubble>
-          </MessageContent>
-        </Message>
-        <Message isSender>
-          <MessageContent>
-            <TextBubble isSender>내가 보낸 메세지</TextBubble>
-          </MessageContent>
-        </Message>
-      </MessageContainer>
+      <Chat />
       <InputContainer>
         <Input type="text" placeholder="메시지를 입력해주세요" />
         <SendButton>
