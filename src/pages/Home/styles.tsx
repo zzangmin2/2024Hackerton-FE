@@ -24,11 +24,12 @@ export const LeftCard = styled.div`
   background-color: #fff;
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  padding: 20px;
+  padding: 40px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   position: relative;
+  box-sizing: border-box;
 `;
 
 // 오른쪽 카드
@@ -45,11 +46,11 @@ export const RightCard = styled.div`
   padding: 20px;
   display: flex;
   flex-direction: column;
+  box-sizing: border-box;
 `;
 
 // 프로필
 export const ProfileContainer = styled.div`
-  margin-left: 15px;
   color: black;
   width: 100%;
 `;
@@ -103,6 +104,24 @@ export const Profile = styled.div`
 export const ChatRoomList = styled.div`
   width: 100%; // 너비 100%
   /* margin-bottom: 380px; // 아래쪽 여백 설정 */
+  height: 20rem;
+  padding-bottom: 40px;
+  overflow-y: scroll;
+  overflow-x: hidden;
+
+  box-sizing: border-box;
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: #cbcbcb;
+    border-radius: 10px;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background: #818181;
+  }
 `;
 
 // 채팅방 항목: 각 채팅방을 나타내는 개별 항목
@@ -139,7 +158,7 @@ export const ChatRoomItemText = styled.p`
 
 // 버튼 롸뻐: 버튼 감싸는 영역
 export const ButtonWrapper = styled.div`
-  width: 18rem;
+  width: calc(20rem - 80px);
   position: absolute; // 변경된 부분
   bottom: 20px; // 하단에 20px 띄우기
 `;
