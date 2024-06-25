@@ -1,11 +1,12 @@
 import { useEffect, useRef, useState } from "react";
 import { wsMessage } from "../typings/db";
 
-const useWebSocket = (url: string) => {
+const useWebSocket = (url: string, roomId: string | null) => {
   const [messages, setMessages] = useState<wsMessage[]>([]);
   const webSocket = useRef<WebSocket | null>(null);
 
   useEffect(() => {
+    if (roomId === null) return;
     webSocket.current = new WebSocket(url);
 
     webSocket.current.onopen = () => {
@@ -13,9 +14,15 @@ const useWebSocket = (url: string) => {
     };
 
     webSocket.current.onmessage = (event) => {
-      const newMessage: wsMessage = JSON.parse(event.data);
-      console.log("Received message:", newMessage); // 수신된 메시지를 로그로 출력
-      setMessages((prevMessages) => [...prevMessages, newMessage]);
+      const data = event.data;
+      if (typeof data === "string" && data.startsWith("Session ID:")) {
+        const id = data.replace("Session ID: ", "").trim();
+        localStorage.setItem("chatBoxSessionId", id);
+      } else {
+        const newMessage = JSON.parse(data);
+        console.log("Received message:", newMessage);
+        setMessages((prevMessages) => [...prevMessages, newMessage]);
+      }
     };
 
     webSocket.current.onclose = () => {
@@ -29,7 +36,7 @@ const useWebSocket = (url: string) => {
     return () => {
       webSocket.current?.close();
     };
-  }, [url]);
+  }, [url, roomId]);
 
   const sendMessage = (message: wsMessage) => {
     if (webSocket.current && webSocket.current.readyState === WebSocket.OPEN) {
@@ -42,7 +49,7 @@ const useWebSocket = (url: string) => {
     }
   };
 
-  return { messages, sendMessage };
+  return { messages, sendMessage, setMessages };
 };
 
 export default useWebSocket;

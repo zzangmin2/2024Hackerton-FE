@@ -51,11 +51,24 @@ export const Message = styled.div<MessageProps>`
 `;
 
 export const MessageText = styled.div`
-  font-weight: 700;
   display: flex;
-  align-items: center;
-  margin-bottom: 10px;
-  margin-top: 0;
+  justify-content: space-between;
+  /* align-items: center; */
+  width: 100%;
+  margin: 0 10px 10px 10px;
+
+  div {
+    display: flex;
+    align-items: center;
+  }
+
+  div.active {
+    width: 10px;
+    height: 10px;
+    background-color: #32e522;
+    border-radius: 50%;
+    margin-right: 10px;
+  }
 `;
 
 // 입력창과 버튼
@@ -96,10 +109,10 @@ export const SendButton = styled.button`
 `;
 
 // 전송 버튼 아이콘 스타일을 정의합니다.
-export const SendIcon = styled(FontAwesomeIcon)`
+export const SendIcon = styled(FontAwesomeIcon)<{ inputLength: number }>`
   margin-top: 11px;
   font-size: 22px;
-  color: #00a6dd; /* 원하는 색상으로 변경 */
+  color: ${({ inputLength }) => (inputLength > 0 ? "#00a6dd" : "#cccccc")};
 `;
 
 // 헤더 부분의 아바타 이미지 스타일

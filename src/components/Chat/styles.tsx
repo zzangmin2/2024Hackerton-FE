@@ -55,7 +55,7 @@ export const MessageContent = styled.div`
   flex-direction: column;
 
   p {
-    font-size: 14px;
+    font-size: 1rem;
   }
 `;
 
@@ -89,29 +89,16 @@ export const TextBubble = styled.div<MessageProps>`
   white-space: pre-wrap;
 `;
 
+export const EnterMessage = styled.div`
+  height: 1rem;
+  font-size: 0.75rem;
+  color: #999;
+`;
+
 // 타임스탬프
 export const Timestamp = styled.div`
   font-size: 11px;
   text-align: center;
-  color: #999;
+  color: #c9c9c9;
   margin: 10px 0;
-  &::before,
-  &::after {
-    content: "";
-    flex: 1;
-    border-bottom: 1px solid #ddd;
-    margin: auto;
-  }
-
-  &::before {
-    margin-right: 20px;
-  }
-
-  &::after {
-    margin-left: 20px;
-  }
-
-  display: flex;
-  align-items: center;
-  width: 100%;
 `;

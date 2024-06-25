@@ -5,10 +5,8 @@ import {
   InputContainer,
   Input,
   SendButton,
-  HeaderAvatar,
   SendIcon,
 } from "./styles";
-import profileImage from "../../image/문채현2.jpg";
 import { faPaperPlane } from "@fortawesome/free-solid-svg-icons";
 import { useParams } from "react-router-dom";
 import { ChatRoomDetailContext, ChatRoomListContext } from "../../App";
@@ -17,14 +15,17 @@ import axios from "axios";
 import { ChatRoomItemType } from "../../typings/db";
 import Chat from "../Chat";
 import useWebSocket from "../../hook/useWebSocket";
+import dayjs from "dayjs";
 
 const HomeChatContainer = () => {
-  const { messages, sendMessage } = useWebSocket("ws://localhost:8080/ws/chat");
   const { roomIndex } = useParams();
+  // 방 정보 ( 방 이름 .. ) 상태
+  const [roomInfo, setRoomInfo] = useState<ChatRoomItemType | null>(null);
+  // 채팅 입력 값 상태
   const [inputValue, setInputValue] = useState("");
-  const hasEntered = useRef(false);
 
-  let roomInfo: ChatRoomItemType;
+  // 최초 입장 상태
+  const hasEntered = useRef(false);
 
   // ChatRoomListContext 가져오기
   const chatRoomListContext = useContext(ChatRoomListContext);
@@ -36,58 +37,101 @@ const HomeChatContainer = () => {
   // ChatRoomDetailContext 가져오기
   const chatRoomDetailContext = useContext(ChatRoomDetailContext);
   if (!chatRoomDetailContext) {
-    throw new Error("chatRoomDetailContext.Provider 없음");
+    throw new Error("ChatRoomDetailContext.Provider 없음");
   }
   const { chatRoomDetail, setChatRoomDetail } = chatRoomDetailContext;
 
+  // localStorage에서 userName과 sessionId가져오기
+  const sessionId = localStorage.getItem("chatBoxSessionId");
+  const userName = localStorage.getItem("chatBoxUserName");
+
+  // WebSocket 훅 사용
+  const { messages, sendMessage, setMessages } = useWebSocket(
+    "ws://localhost:8080/ws/chat",
+    roomInfo?.roomId || null
+  ); // 수정된 부분: roomInfo?.roomId를 useWebSocket에 전달
+
   //페이지 이동할 때마다 roomInfo 수정하기
   useEffect(() => {
-    if (roomIndex && chatRoomList.length >= 1) {
-      roomInfo = chatRoomList[parseInt(roomIndex)];
-      loadChatInfo();
-    }
-  }, [roomIndex, chatRoomList]);
+    const loadChatInfo = async (roomIdx: number) => {
+      try {
+        const room = chatRoomList[roomIdx];
+        const response = await axios.get(
+          `http://localhost:8080/chat/room/${room.roomId}`
+        );
+        setRoomInfo(room);
+        setChatRoomDetail(response.data);
+        setMessages([]);
+        hasEntered.current = false;
+      } catch (error) {
+        console.error(error);
+      }
+    };
 
-  const loadChatInfo = async () => {
+    if (roomIndex && chatRoomList.length >= 1) {
+      const roomIdx = parseInt(roomIndex, 10);
+      if (!isNaN(roomIdx) && roomIdx >= 0 && roomIdx < chatRoomList.length) {
+        loadChatInfo(roomIdx);
+      }
+    }
+  }, [roomIndex, chatRoomList, setChatRoomDetail, setMessages]);
+
+  //채팅방 최초 입장확인 함수
+  const isFirstEntry = async (roomId: string) => {
     try {
-      const response = await axios.get(
-        `http://localhost:8080/chat/room/${roomInfo.roomId}`
-      );
-      setChatRoomDetail(response.data);
-      hasEntered.current = false;
+      if (sessionId) {
+        const response = await axios.get(
+          `http://localhost:8080/chat/${roomId}/isUserInRoom`,
+          {
+            headers: {
+              "session-id": sessionId,
+            },
+          }
+        );
+
+        return response.data;
+      }
     } catch (error) {
       console.error(error);
     }
   };
 
+  //채팅방 최초 입장 시에 type:"ENTER"인 데이터 보내기
   useEffect(() => {
-    if (chatRoomDetail && !hasEntered.current) {
-      const enterMessage = {
-        type: "ENTER",
-        roomId: chatRoomDetail.roomId,
-        sender: "프론트유저",
-        message: "",
-        time: new Date().toString(),
-      };
+    const checkFirstEntry = async () => {
+      if (roomInfo && userName && !hasEntered.current) {
+        hasEntered.current = true;
 
-      console.log(enterMessage);
-      sendMessage(enterMessage);
-      hasEntered.current = true;
-    }
-  }, [chatRoomDetail]);
+        const isExistingUser = await isFirstEntry(roomInfo.roomId);
+        if (!isExistingUser) {
+          const enterMessage = {
+            type: "ENTER",
+            roomId: roomInfo.roomId,
+            sender: userName,
+            message: "입장",
+            time: dayjs().format("YYYY년 MM월 DD일 HH:mm"),
+          };
 
+          sendMessage(enterMessage);
+        }
+      }
+    };
+
+    checkFirstEntry();
+  }, [roomInfo, userName, sendMessage]);
+
+  // 메세지 전송하기
   const handleSendMessage = () => {
     if (inputValue.trim() === "") return;
-    if (chatRoomDetail) {
+    if (roomInfo && userName) {
       const newMessage = {
         type: "TALK",
-        roomId: chatRoomDetail.roomId,
-        sender: "프론트유저",
+        roomId: roomInfo.roomId,
+        sender: userName,
         message: inputValue,
         time: new Date().toString(),
       };
 
-      console.log(newMessage);
       sendMessage(newMessage);
       setInputValue("");
     }
@@ -96,12 +140,16 @@ const HomeChatContainer = () => {
   return (
     <Container>
       <Header>
-        <HeaderAvatar src={profileImage} alt="avatar" />
         <MessageText>
-          <p>{chatRoomDetail.name}</p>
+          <p>{chatRoomDetail?.name}</p>
+          <div>
+            <div className="active" />
+            <p>{chatRoomDetail?.chatUserCnt} users</p>
+          </div>
         </MessageText>
       </Header>
-      <Chat messages={messages} />
+      <Chat messages={messages} />{" "}
+      {/* 수정된 부분: messages가 올바르게 전달되는지 확인 */}
       <InputContainer>
         <Input
           type="text"
@@ -110,7 +158,7 @@ const HomeChatContainer = () => {
           onChange={(e) => setInputValue(e.target.value)}
         />
         <SendButton onClick={handleSendMessage}>
-          <SendIcon icon={faPaperPlane} />
+          <SendIcon icon={faPaperPlane} inputLength={inputValue.length} />
         </SendButton>
       </InputContainer>
     </Container>
