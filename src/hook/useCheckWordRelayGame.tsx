@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 import axios from "axios";
-import dayjs from "dayjs";
 import { ChatRoomItemType, wsMessage } from "../typings/db";
+import useCreateMessage from "./useCreateMessage";
 
 const useCheckWordRelayGame = (
   roomInfo: ChatRoomItemType | null,
@@ -10,6 +10,8 @@ const useCheckWordRelayGame = (
   wordRelayGameState: boolean,
   setWordRelayGameState: (state: boolean) => void
 ) => {
+  const createMessage = useCreateMessage(roomInfo, userName);
+
   return useCallback(
     async (inputValue: string) => {
       console.log("현재 끝말잇기 상태" + wordRelayGameState);
@@ -20,13 +22,10 @@ const useCheckWordRelayGame = (
           word = inputValue.split("!")[1].trim();
 
           if (roomInfo && userName) {
-            const newMessage = {
-              type: "TALK",
-              roomId: roomInfo.roomId,
-              sender: userName,
-              message: `끝말잇기 시작!! \n 첫 번째 단어 : ${word}`,
-              time: dayjs().format("YYYY년 MM월 DD일 HH:mm"),
-            };
+            const newMessage = createMessage(
+              `끝말잇기 시작!! \n 첫 번째 단어 : ${word}`,
+              "TALK"
+            );
 
             sendMessage(newMessage);
           }
@@ -46,13 +45,10 @@ const useCheckWordRelayGame = (
             setWordRelayGameState(true);
           } else {
             if (roomInfo && userName) {
-              const newMessage = {
-                type: "TALK",
-                roomId: roomInfo.roomId,
-                sender: userName,
-                message: `오잉! 이상한 단어 입력. 끝말잇기 패배`,
-                time: dayjs().format("YYYY년 MM월 DD일 HH:mm"),
-              };
+              const newMessage = createMessage(
+                `오잉! 이상한 단어 입력. 끝말잇기 패배`,
+                "TALK"
+              );
 
               sendMessage(newMessage);
             }
@@ -66,7 +62,14 @@ const useCheckWordRelayGame = (
         }
       }
     },
-    [roomInfo, userName, sendMessage, wordRelayGameState, setWordRelayGameState]
+    [
+      roomInfo,
+      userName,
+      sendMessage,
+      createMessage,
+      wordRelayGameState,
+      setWordRelayGameState,
+    ]
   );
 };
 

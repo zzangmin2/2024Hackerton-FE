@@ -6,6 +6,8 @@ import {
   Input,
   SendButton,
   SendIcon,
+  CommandDisplay,
+  WordRelayGameRule,
 } from "./styles";
 import { faPaperPlane } from "@fortawesome/free-solid-svg-icons";
 import { useParams } from "react-router-dom";
@@ -22,14 +24,15 @@ import axios from "axios";
 import { ChatRoomItemType } from "../../typings/db";
 import Chat from "../Chat";
 import useWebSocket from "../../hook/useWebSocket";
-import dayjs from "dayjs";
 import useCheckLunchKeyword from "../../hook/useCheckLunchKeyword";
 import useCheckWordRelayGame from "../../hook/useCheckWordRelayGame";
+import useCreateMessage from "../../hook/useCreateMessage";
 
 const HomeChatContainer = () => {
   const { roomIndex } = useParams();
   const [roomInfo, setRoomInfo] = useState<ChatRoomItemType | null>(null);
   const [inputValue, setInputValue] = useState("");
+  const [isCommand, setIsCommand] = useState(false);
   const [wordRelayGameState, setWordRelayGameState] = useState<boolean>(false);
   const hasEntered = useRef(false);
 
@@ -53,6 +56,7 @@ const HomeChatContainer = () => {
     roomInfo?.roomId || null
   );
 
+  const createMessage = useCreateMessage(roomInfo, userName);
   const checkLunchKeyword = useCheckLunchKeyword(
     roomInfo,
     userName,
@@ -118,13 +122,7 @@ const HomeChatContainer = () => {
 
         const isExistingUser = await isFirstEntry(roomInfo.roomId);
         if (!isExistingUser) {
-          const enterMessage = {
-            type: "ENTER",
-            roomId: roomInfo.roomId,
-            sender: userName,
-            message: "입장",
-            time: dayjs().format("YYYY년 MM월 DD일 HH:mm"),
-          };
+          const enterMessage = createMessage("입장", "ENTER");
 
           sendMessage(enterMessage);
         }
@@ -137,28 +135,33 @@ const HomeChatContainer = () => {
   const handleSendMessage = useCallback(async () => {
     if (inputValue.trim() === "") return;
     if (roomInfo && userName) {
-      const newMessage = {
-        type: "TALK",
-        roomId: roomInfo.roomId,
-        sender: userName,
-        message: inputValue,
-        time: dayjs().format("YYYY년 MM월 DD일 HH:mm"),
-      };
-
+      const newMessage = createMessage(inputValue, "TALK");
       sendMessage(newMessage);
       await checkLunchKeyword(inputValue);
       await checkWordRelayGame(inputValue);
 
       setInputValue("");
+      setIsCommand(false);
     }
   }, [
     inputValue,
     roomInfo,
     userName,
     sendMessage,
+    createMessage,
     checkLunchKeyword,
     checkWordRelayGame,
   ]);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setInputValue(value);
+    if (value.startsWith("/학식") || value.startsWith("/끝말잇기")) {
+      setIsCommand(true);
+    } else {
+      setIsCommand(false);
+    }
+  };
 
   const handleKeyPress = useCallback(
     (event: React.KeyboardEvent<HTMLInputElement>) => {
@@ -182,12 +185,30 @@ const HomeChatContainer = () => {
       </Header>
       <Chat messages={messages} />
       <InputContainer>
+        {isCommand && inputValue.startsWith("/끝말잇기") && (
+          <WordRelayGameRule>
+            Tip !
+            <br />
+            처음 시작 시
+            <b>
+              <br /> /끝말잇기 ![제시 단어]
+            </b>
+            <br />
+            형태로 입력해주세요!
+          </WordRelayGameRule>
+        )}
+        {isCommand && (
+          <CommandDisplay>
+            {inputValue.startsWith("/학식") ? "/학식" : "/끝말잇기"}
+          </CommandDisplay>
+        )}
         <Input
           type="text"
           placeholder="메시지를 입력해주세요"
           value={inputValue}
-          onChange={(e) => setInputValue(e.target.value)}
+          onChange={handleChange}
           onKeyPress={handleKeyPress}
+          isCommand={isCommand}
         />
         <SendButton onClick={handleSendMessage}>
           <SendIcon icon={faPaperPlane} inputLength={inputValue.length} />
