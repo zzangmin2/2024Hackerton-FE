@@ -14,15 +14,15 @@ import {
   ButtonWrapper,
 } from "./styles";
 import profileImage from "../../image/문채현2.jpg"; // 이미지 가져오기
-// import HomeGreetingContainer from "../../components/HomeGreetingContainer";
-import HomeChatContainer from "../../components/HomeChatContainer";
 import { useContext, useEffect, useState } from "react";
 import HomeCreateRoomModal from "../../components/HomeCreateRoomModal";
 import { ChatRoomListContext, ModalContext } from "../../App";
 import axios from "axios";
 import { ChatRoomItemType } from "../../typings/db";
+import { Outlet, useNavigate } from "react-router-dom";
 
 const Home = () => {
+  const navigate = useNavigate();
   const [userName, setUserName] = useState<string>();
 
   // modalContext 가져오기
@@ -71,14 +71,26 @@ const Home = () => {
           <ProfileContainer>
             <Title>YB CHAT</Title>
             <Subtitle>MY PROFILE</Subtitle>
-            <Profile>
+            <Profile onClick={() => navigate("/intro")}>
               <img src={profileImage} alt="Profile" />
               <p>{userName}</p>
             </Profile>
             <Subtitle>CURRENT CHAT ROOM LIST</Subtitle>
             <ChatRoomList>
               {chatRoomList.map((item: ChatRoomItemType) => (
-                <ChatRoomItem key={item.roomId}>
+                <ChatRoomItem
+                  key={item.roomId}
+                  onClick={() => {
+                    const roomIndex = chatRoomList.findIndex(
+                      (room) => room.roomId === item.roomId
+                    );
+                    if (roomIndex !== -1) {
+                      navigate(`/chat/${roomIndex}`);
+                    } else {
+                      console.error("roomId를 찾을 수 업땅");
+                    }
+                  }}
+                >
                   <img src={profileImage} alt="Chat Room" />
                   <div>
                     <p className="chatRoomItemTitle">{item.name}</p>
@@ -95,8 +107,7 @@ const Home = () => {
           </ProfileContainer>
         </LeftCard>
         <RightCard>
-          {/* <HomeGreetingContainer /> */}
-          <HomeChatContainer />
+          <Outlet />
         </RightCard>
       </Container>
       {modal ? <HomeCreateRoomModal /> : null}

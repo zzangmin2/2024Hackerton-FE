@@ -8,6 +8,12 @@ const UserRegister = () => {
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    if (username.length < 2) {
+      alert("최소 2글자 이상 입력해주세요.");
+      return;
+    }
+
     console.log("Submitted Username:", username);
     localStorage.setItem("chatBoxUserName", username);
     navigate("/");

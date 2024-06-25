@@ -18,6 +18,19 @@ export const Form = styled.form`
   transform: translate(-50%, -50%);
 `;
 
+export const CloseButtonWrap = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+  padding-right: 50px;
+  box-sizing: border-box;
+  cursor: pointer;
+  > button {
+    background: none;
+    border: none;
+  }
+`;
+
 // InputRow: 입력 필드와 버튼을 같은 줄에 정렬하기 위한 컨테이너.
 export const InputRow = styled.div`
   display: flex;
