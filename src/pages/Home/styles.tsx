@@ -55,16 +55,19 @@ export const ProfileContainer = styled.div`
   width: 100%;
 `;
 
-// 타이틀 스타일: YB CHAT 텍스트 스타일
 export const Title = styled.h2`
-  color: #00a6dd;
-  width: 99px;
+  color: #a8866b;
+  display: flex;
+  /* width: 99px; */
   height: 35px;
   font-weight: 700;
   font-size: 24px;
   line-height: 34.75px;
   margin: 0 0 20px 0; // 상단과 하단 여백 설정
   white-space: nowrap; // 줄바꿈을 하지 않도록 설정
+  > span {
+    margin-left: 10px;
+  }
 `;
 
 // 서브타이틀 스타일: MY PROFILE 및 CURRENT CHAT ROOM LIST 텍스트 스타일

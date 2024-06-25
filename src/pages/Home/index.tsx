@@ -12,7 +12,7 @@ import {
   ChatRoomItemText,
   ButtonWrapper,
 } from "./styles";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useMemo } from "react";
 import HomeCreateRoomModal from "../../components/HomeCreateRoomModal";
 import {
   ChatRoomDetailContext,
@@ -26,8 +26,8 @@ import Gravatar from "react-gravatar";
 
 const Home = () => {
   const navigate = useNavigate();
-  const [userName, setUserName] = useState<string>();
-
+  // const [userName, setUserName] = useState<string>();
+  const userName = useMemo(() => localStorage.getItem("chatBoxUserName"), []);
   // modalContext 가져오기
   const modalContext = useContext(ModalContext);
   if (!modalContext) {
@@ -49,12 +49,12 @@ const Home = () => {
   }
   const { chatRoomDetail, setChatRoomDetail } = chatRoomDetailContext;
 
-  useEffect(() => {
-    const localstorageUserName = localStorage.getItem("chatBoxUserName");
-    if (localstorageUserName) {
-      setUserName(localstorageUserName);
-    }
-  }, []);
+  // useEffect(() => {
+  //   const localstorageUserName = localStorage.getItem("chatBoxUserName");
+  //   if (localstorageUserName) {
+  //     setUserName(localstorageUserName);
+  //   }
+  // }, []);
 
   const loadChatRoomList = async () => {
     try {
@@ -93,7 +93,10 @@ const Home = () => {
       <Container>
         <LeftCard>
           <ProfileContainer>
-            <Title>CHATBOX : 챗박스</Title>
+            <Title>
+              <img src="/images/DDKlogo.png" alt="땅콩로고" />
+              <span>땅콩</span>
+            </Title>
             <Subtitle>MY PROFILE</Subtitle>
             <Profile onClick={() => handleNavigation(() => navigate("/intro"))}>
               <Gravatar email={userName} size={40} default="retro" />

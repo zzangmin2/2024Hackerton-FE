@@ -1,5 +1,8 @@
 import styled from "styled-components";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+interface InputProps {
+  isCommand: boolean;
+}
 
 // 전체 채팅 컨테이너
 export const Container = styled.div`
@@ -74,12 +77,14 @@ export const MessageText = styled.div`
 // 입력창과 버튼
 export const InputContainer = styled.div`
   display: flex;
+  justify-content: space-between;
   align-items: center;
   border-top: 1px solid #f7f7f7;
+  position: relative;
 `;
 
 // 입력창의 스타일
-export const Input = styled.input`
+export const Input = styled.input<InputProps>`
   color: black;
   margin-top: 2%;
   flex: 1;
@@ -87,10 +92,30 @@ export const Input = styled.input`
   border: none;
   margin-left: 1%;
   margin-right: 3%;
-
   &:focus {
     outline: none;
   }
+`;
+
+export const WordRelayGameRule = styled.div`
+  position: absolute;
+  bottom: 3rem;
+  font-size: 0.75rem;
+  padding: 10px;
+  border-radius: 10px;
+  background-color: #e6f7ff;
+  color: #007298;
+`;
+
+export const CommandDisplay = styled.div`
+  /* position: absolute; */
+  margin-top: 10px;
+  background-color: #f0f0f0;
+  border-radius: 10px;
+  padding: 2px 5px;
+  font-size: 14px;
+  color: #717171;
+  font-weight: 700;
 `;
 
 // 전송 버튼
@@ -112,7 +137,7 @@ export const SendButton = styled.button`
 export const SendIcon = styled(FontAwesomeIcon)<{ inputLength: number }>`
   margin-top: 11px;
   font-size: 22px;
-  color: ${({ inputLength }) => (inputLength > 0 ? "#00a6dd" : "#cccccc")};
+  color: ${({ inputLength }) => (inputLength > 0 ? "#A8866B" : "#cccccc")};
 `;
 
 // 헤더 부분의 아바타 이미지 스타일

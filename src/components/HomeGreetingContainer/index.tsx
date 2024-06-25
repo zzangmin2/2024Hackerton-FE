@@ -8,7 +8,7 @@ const HomeGreetingContainer = () => {
           <h1>안녕하세요!</h1>
           <h2>문채현 님,</h2>
           <p>
-            YB CHAT은
+            땅콩은
             <br />
             교내의 다양한 관심사를 가진 학우들과
             <br />

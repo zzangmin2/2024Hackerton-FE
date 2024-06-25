@@ -84,7 +84,7 @@ export const BubbleContainer = styled.div`
 // 말풍선
 export const TextBubble = styled.div<MessageProps>`
   background-color: ${({ issender }) =>
-    issender === "true" ? "#00A6DD" : "#F7F7F7"};
+    issender === "true" ? "#A8866B" : "#F7F7F7"};
   color: ${({ issender }) => (issender === "true" ? "#FFF8F8" : "#000")};
   padding: 12px;
   border-radius: 10px;

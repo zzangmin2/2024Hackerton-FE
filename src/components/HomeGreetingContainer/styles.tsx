@@ -29,7 +29,7 @@ export const GreetingText = styled.div`
   }
 
   a {
-    color: #00a6dd; // 링크 색상
+    color: #a8866b; // 링크 색상
     font-weight: bold; // 글자 굵기 설정
     text-decoration: underline;
   }
