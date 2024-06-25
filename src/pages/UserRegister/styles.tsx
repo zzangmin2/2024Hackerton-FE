@@ -8,7 +8,7 @@ export const Form = styled.form`
   align-items: center;
   justify-content: center;
   width: 515px;
-  height: 351px;
+  height: 400px;
   background: #ffffff;
   border-radius: 10px;
   box-shadow: 0 48px 100px rgba(17, 12, 46, 0.05);
@@ -23,27 +23,6 @@ export const InputRow = styled.div`
   display: flex;
   align-items: center;
   margin-bottom: 20px;
-`;
-
-// 중복확인 버튼
-export const CheckButton = styled.button`
-  width: 96px;
-  height: 60px;
-  margin-left: 12px;
-  background-color: #ffffff;
-  color: #00a6dd;
-  border: 1px solid #00a6dd;
-  border-radius: 10px;
-  cursor: pointer;
-  font-size: 18px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 10px 5px;
-  &:hover {
-    background-color: #00a6dd;
-    color: white;
-  }
 `;
 
 // 사용할 닉네임 입력 input
@@ -82,13 +61,23 @@ export const Input = styled.input`
 //   aria-label: "시작하기";
 // `;
 
-// DAELIM CHAT
 export const Title = styled.h1`
   font-size: 1.5em;
-  color: #00a6dd;
-  margin-bottom: 40px;
+  color: #a8866b;
 `;
 
 export const ButtonWrapper = styled.div`
   width: 390px;
+`;
+
+export const RandomNameContainer = styled.div`
+  > button {
+    border: none;
+    background: none;
+    text-decoration: underline;
+    font-weight: 700;
+    color: #decbbb;
+    cursor: pointer;
+  }
+  margin-bottom: 20px;
 `;

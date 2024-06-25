@@ -98,7 +98,7 @@ export const Profile = styled.div`
   }
 
   p {
-    font-size: 22px; // 글자 크기 설정
+    font-size: 1.2rem; // 글자 크기 설정
     font-weight: 700; // 글자 굵기 설정
     margin: 0; // 여백 제거
   }

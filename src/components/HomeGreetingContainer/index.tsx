@@ -1,14 +1,17 @@
+import { useMemo } from "react";
 import { GreetingContainer, GreetingText } from "./styles";
 
 const HomeGreetingContainer = () => {
+  const userName = useMemo(() => localStorage.getItem("chatBoxUserName"), []);
+
   return (
     <>
       <GreetingContainer>
         <GreetingText>
           <h1>안녕하세요!</h1>
-          <h2>문채현 님,</h2>
+          <h2>{userName}님,</h2>
           <p>
-            땅콩은
+            <b>땅콩</b>은
             <br />
             교내의 다양한 관심사를 가진 학우들과
             <br />
