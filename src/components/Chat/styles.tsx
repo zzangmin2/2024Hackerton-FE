@@ -31,10 +31,9 @@ export const MessageContainer = styled.div`
 // 개별 메시지
 export const Message = styled.div<MessageProps>`
   width: 100%;
-  height: 40px;
   display: flex;
   align-items: flex-start;
-  margin: 20px 0;
+  margin: 10px 0;
   ${({ issender }) =>
     issender === "true" &&
     `
@@ -55,7 +54,7 @@ export const MessageContent = styled.div`
   flex-direction: column;
 
   p {
-    font-size: 1rem;
+    font-size: 0.75rem;
   }
 `;
 
@@ -69,14 +68,20 @@ export const MessageText = styled.div`
 `;
 
 // 아바타 이미지
-export const Avatar = styled.img`
+export const Avatar = styled.div`
   width: 40px;
   height: 40px;
   border-radius: 50%;
   margin-right: 10px;
+  overflow: hidden;
 `;
 
-//말풍선
+export const BubbleContainer = styled.div`
+  display: flex;
+  align-items: flex-end;
+`;
+
+// 말풍선
 export const TextBubble = styled.div<MessageProps>`
   background-color: ${({ issender }) =>
     issender === "true" ? "#00A6DD" : "#F7F7F7"};
@@ -84,9 +89,18 @@ export const TextBubble = styled.div<MessageProps>`
   padding: 12px;
   border-radius: 10px;
   font-size: 12px;
-  max-width: 100%; /* 말풍선의 최대 너비를 증가 */
   display: inline-block;
   white-space: pre-wrap;
+  margin: ${({ issender }) =>
+    issender === "true" ? "0 0 0 10px" : "0 10px 0 0"};
+  position: relative;
+`;
+
+// 말풍선 오른쪽에 시간 표시
+export const TimeText = styled.span`
+  font-size: 0.75rem;
+  color: #888;
+  align-self: flex-end;
 `;
 
 export const EnterMessage = styled.div`
@@ -97,8 +111,6 @@ export const EnterMessage = styled.div`
 
 // 타임스탬프
 export const Timestamp = styled.div`
-  font-size: 11px;
-  text-align: center;
+  font-size: 10px;
   color: #c9c9c9;
-  margin: 10px 0;
 `;

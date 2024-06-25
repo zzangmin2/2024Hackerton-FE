@@ -88,8 +88,8 @@ export const Profile = styled.div`
   cursor: pointer;
 
   img {
-    width: 80px; // 이미지 너비
-    height: 80px; // 이미지 높이
+    width: 46px; // 이미지 너비
+    height: 46px; // 이미지 높이
     border-radius: 50%; // 원형 이미지
     margin-right: 20px; // 오른쪽 여백 설정
   }
@@ -129,10 +129,12 @@ export const ChatRoomList = styled.div`
 export const ChatRoomItem = styled.div`
   display: flex; // Flexbox 레이아웃 사용
   align-items: center; // 세로축 중앙 정렬
-  margin-bottom: 20px; // 아래쪽 여백 설정
+  padding-bottom: 10px;
+  margin-bottom: 10px; // 아래쪽 여백 설정
   color: #354843;
   cursor: pointer;
   box-sizing: border-box;
+  border-bottom: 1px solid #f7f7f7;
 
   img {
     width: 52px; // 이미지 너비

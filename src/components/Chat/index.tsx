@@ -1,16 +1,18 @@
 import {
   Avatar,
+  BubbleContainer,
   EnterMessage,
   Message,
   MessageContainer,
   MessageContent,
   TextBubble,
+  TimeText,
   Timestamp,
 } from "./styles";
-import profileImage from "../../image/문채현2.jpg";
 import { useEffect, useRef } from "react";
 import { wsMessage } from "../../typings/db";
 import dayjs from "dayjs";
+import Gravatar from "react-gravatar";
 
 interface ChatProps {
   messages: wsMessage[];
@@ -47,17 +49,30 @@ const Chat: React.FC<ChatProps> = ({ messages }) => {
               )}
               <Message issender={(msg.sender === userName).toString()}>
                 {msg.sender !== userName && (
-                  <Avatar src={profileImage} alt="avatar" />
+                  <Avatar>
+                    <Gravatar email={msg.sender} size={40} default="retro" />
+                  </Avatar>
                 )}
                 <MessageContent>
                   {msg.sender !== userName && <p>{msg.sender}</p>}
-                  {msg.type === "TALK" ? (
-                    <TextBubble issender={(msg.sender === userName).toString()}>
-                      {msg.message}
-                    </TextBubble>
-                  ) : (
-                    <EnterMessage>{msg.message}</EnterMessage>
-                  )}
+                  <BubbleContainer>
+                    {msg.sender === userName && msg.type === "TALK" && (
+                      <TimeText>{dayjs(msg.time).format("HH:mm")}</TimeText>
+                    )}
+                    {msg.type === "TALK" ? (
+                      <TextBubble
+                        issender={(msg.sender === userName).toString()}
+                      >
+                        {msg.message}
+                      </TextBubble>
+                    ) : (
+                      <EnterMessage>{msg.message}</EnterMessage>
+                    )}
+
+                    {msg.sender !== userName && msg.type === "TALK" && (
+                      <TimeText>{dayjs(msg.time).format("HH:mm")}</TimeText>
+                    )}
+                  </BubbleContainer>
                 </MessageContent>
               </Message>
             </div>
