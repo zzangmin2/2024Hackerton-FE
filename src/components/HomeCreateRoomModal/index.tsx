@@ -3,6 +3,7 @@ import RegisterForm from "../RegisterForm";
 import styled from "styled-components";
 import axios from "axios";
 import { ChatRoomListContext, ModalContext } from "../../App";
+import { useNavigate } from "react-router-dom";
 
 const ModalBackground = styled.div`
   position: fixed;
@@ -17,6 +18,7 @@ const ModalBackground = styled.div`
 `;
 
 const HomeCreateRoomModal = () => {
+  const navigate = useNavigate();
   const [roomname, setRoomname] = useState<string>("");
 
   // modalContext 가져오기
@@ -46,6 +48,7 @@ const HomeCreateRoomModal = () => {
       );
       console.log("방 생성", response.data);
       setChatRoomList([...chatRoomList, response.data]);
+      navigate(`/chat/${chatRoomList.length}`);
       setModal(false);
     } catch (error) {
       console.error(error);

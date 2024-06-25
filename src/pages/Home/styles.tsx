@@ -55,16 +55,19 @@ export const ProfileContainer = styled.div`
   width: 100%;
 `;
 
-// 타이틀 스타일: YB CHAT 텍스트 스타일
 export const Title = styled.h2`
-  color: #00a6dd;
-  width: 99px;
+  color: #a8866b;
+  display: flex;
+  /* width: 99px; */
   height: 35px;
   font-weight: 700;
   font-size: 24px;
   line-height: 34.75px;
   margin: 0 0 20px 0; // 상단과 하단 여백 설정
   white-space: nowrap; // 줄바꿈을 하지 않도록 설정
+  > span {
+    margin-left: 10px;
+  }
 `;
 
 // 서브타이틀 스타일: MY PROFILE 및 CURRENT CHAT ROOM LIST 텍스트 스타일
@@ -88,14 +91,14 @@ export const Profile = styled.div`
   cursor: pointer;
 
   img {
-    width: 80px; // 이미지 너비
-    height: 80px; // 이미지 높이
+    width: 46px; // 이미지 너비
+    height: 46px; // 이미지 높이
     border-radius: 50%; // 원형 이미지
     margin-right: 20px; // 오른쪽 여백 설정
   }
 
   p {
-    font-size: 22px; // 글자 크기 설정
+    font-size: 1.2rem; // 글자 크기 설정
     font-weight: 700; // 글자 굵기 설정
     margin: 0; // 여백 제거
   }
@@ -129,10 +132,12 @@ export const ChatRoomList = styled.div`
 export const ChatRoomItem = styled.div`
   display: flex; // Flexbox 레이아웃 사용
   align-items: center; // 세로축 중앙 정렬
-  margin-bottom: 20px; // 아래쪽 여백 설정
+  padding-bottom: 10px;
+  margin-bottom: 10px; // 아래쪽 여백 설정
   color: #354843;
   cursor: pointer;
   box-sizing: border-box;
+  border-bottom: 1px solid #f7f7f7;
 
   img {
     width: 52px; // 이미지 너비

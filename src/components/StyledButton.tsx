@@ -13,7 +13,7 @@ const ButtonStyle = styled.button`
   /* width: 386px; */
   width: 100%;
   height: 60px;
-  background-color: #00a6dd;
+  background-color: #a8866b;
   color: white;
   border: none;
   border-radius: 10px;
@@ -25,7 +25,7 @@ const ButtonStyle = styled.button`
   font-weight: 700;
 
   &:hover {
-    background-color: #0056b3;
+    background-color: #937963;
   }
 `;
 

@@ -6,52 +6,76 @@ import {
   Input,
   SendButton,
   SendIcon,
+  CommandDisplay,
+  WordRelayGameRule,
 } from "./styles";
 import { faPaperPlane } from "@fortawesome/free-solid-svg-icons";
 import { useParams } from "react-router-dom";
 import { ChatRoomDetailContext, ChatRoomListContext } from "../../App";
-import { useContext, useEffect, useRef, useState } from "react";
+import {
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+  useCallback,
+  useMemo,
+} from "react";
 import axios from "axios";
 import { ChatRoomItemType } from "../../typings/db";
 import Chat from "../Chat";
 import useWebSocket from "../../hook/useWebSocket";
-import dayjs from "dayjs";
-
+import useCheckLunchKeyword from "../../hook/useCheckLunchKeyword";
+import useCheckWordRelayGame from "../../hook/useCheckWordRelayGame";
+import useCreateMessage from "../../hook/useCreateMessage";
 const HomeChatContainer = () => {
   const { roomIndex } = useParams();
-  // 방 정보 ( 방 이름 .. ) 상태
   const [roomInfo, setRoomInfo] = useState<ChatRoomItemType | null>(null);
-  // 채팅 입력 값 상태
   const [inputValue, setInputValue] = useState("");
-
-  // 최초 입장 상태
+  const [isCommand, setIsCommand] = useState(false);
+  const [wordRelayGameState, setWordRelayGameState] = useState<boolean>(false);
   const hasEntered = useRef(false);
 
-  // ChatRoomListContext 가져오기
   const chatRoomListContext = useContext(ChatRoomListContext);
   if (!chatRoomListContext) {
     throw new Error("ChatRoomListContext.Provider 없음");
   }
   const { chatRoomList } = chatRoomListContext;
 
-  // ChatRoomDetailContext 가져오기
   const chatRoomDetailContext = useContext(ChatRoomDetailContext);
   if (!chatRoomDetailContext) {
     throw new Error("ChatRoomDetailContext.Provider 없음");
   }
   const { chatRoomDetail, setChatRoomDetail } = chatRoomDetailContext;
 
-  // localStorage에서 userName과 sessionId가져오기
-  const sessionId = localStorage.getItem("chatBoxSessionId");
-  const userName = localStorage.getItem("chatBoxUserName");
+  const sessionId = useMemo(() => localStorage.getItem("chatBoxSessionId"), []);
+  const userName = useMemo(() => localStorage.getItem("chatBoxUserName"), []);
 
-  // WebSocket 훅 사용
-  const { messages, sendMessage, setMessages } = useWebSocket(
+  const { messages, sendMessage, setMessages, loading, error } = useWebSocket(
     "ws://localhost:8080/ws/chat",
     roomInfo?.roomId || null
-  ); // 수정된 부분: roomInfo?.roomId를 useWebSocket에 전달
+  );
 
-  //페이지 이동할 때마다 roomInfo 수정하기
+  const createMessage = useCreateMessage(roomInfo, userName);
+  const { checkLunchKeyword, loading: lunchLoading } = useCheckLunchKeyword(
+    roomInfo,
+    userName,
+    sendMessage
+  );
+  const checkWordRelayGame = useCheckWordRelayGame(
+    roomInfo,
+    userName,
+    sendMessage,
+    wordRelayGameState,
+    setWordRelayGameState
+  );
+
+  useEffect(() => {
+    if (lunchLoading) {
+      setInputValue("");
+      setInputValue("학식을 가져오는 중 ..");
+    }
+  }, [lunchLoading]);
+
   useEffect(() => {
     const loadChatInfo = async (roomIdx: number) => {
       try {
@@ -76,27 +100,27 @@ const HomeChatContainer = () => {
     }
   }, [roomIndex, chatRoomList, setChatRoomDetail, setMessages]);
 
-  //채팅방 최초 입장확인 함수
-  const isFirstEntry = async (roomId: string) => {
-    try {
-      if (sessionId) {
-        const response = await axios.get(
-          `http://localhost:8080/chat/${roomId}/isUserInRoom`,
-          {
-            headers: {
-              "session-id": sessionId,
-            },
-          }
-        );
-
-        return response.data;
+  const isFirstEntry = useCallback(
+    async (roomId: string) => {
+      try {
+        if (sessionId) {
+          const response = await axios.get(
+            `http://localhost:8080/chat/${roomId}/isUserInRoom`,
+            {
+              headers: {
+                "session-id": sessionId,
+              },
+            }
+          );
+          return response.data;
+        }
+      } catch (error) {
+        console.error(error);
       }
-    } catch (error) {
-      console.error(error);
-    }
-  };
+    },
+    [sessionId]
+  );
 
-  //채팅방 최초 입장 시에 type:"ENTER"인 데이터 보내기
   useEffect(() => {
     const checkFirstEntry = async () => {
       if (roomInfo && userName && !hasEntered.current) {
@@ -104,13 +128,7 @@ const HomeChatContainer = () => {
 
         const isExistingUser = await isFirstEntry(roomInfo.roomId);
         if (!isExistingUser) {
-          const enterMessage = {
-            type: "ENTER",
-            roomId: roomInfo.roomId,
-            sender: userName,
-            message: "입장",
-            time: dayjs().format("YYYY년 MM월 DD일 HH:mm"),
-          };
+          const enterMessage = createMessage("입장", "ENTER");
 
           sendMessage(enterMessage);
         }
@@ -118,24 +136,55 @@ const HomeChatContainer = () => {
     };
 
     checkFirstEntry();
-  }, [roomInfo, userName, sendMessage]);
+  }, [roomInfo, userName, sendMessage, isFirstEntry, createMessage]);
 
-  // 메세지 전송하기
-  const handleSendMessage = () => {
+  const handleSendMessage = useCallback(async () => {
     if (inputValue.trim() === "") return;
     if (roomInfo && userName) {
-      const newMessage = {
-        type: "TALK",
-        roomId: roomInfo.roomId,
-        sender: userName,
-        message: inputValue,
-        time: new Date().toString(),
-      };
-
+      const newMessage = createMessage(inputValue, "TALK");
       sendMessage(newMessage);
+      await checkLunchKeyword(inputValue);
+      await checkWordRelayGame(inputValue);
+
       setInputValue("");
+      setIsCommand(false);
+    }
+  }, [
+    inputValue,
+    roomInfo,
+    userName,
+    sendMessage,
+    createMessage,
+    checkLunchKeyword,
+    checkWordRelayGame,
+  ]);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setInputValue(value);
+    if (value.startsWith("/학식") || value.startsWith("/끝말잇기")) {
+      setIsCommand(true);
+    } else {
+      setIsCommand(false);
     }
   };
+
+  const handleKeyPress = useCallback(
+    (event: React.KeyboardEvent<HTMLInputElement>) => {
+      if (event.key === "Enter") {
+        handleSendMessage();
+      }
+    },
+    [handleSendMessage]
+  );
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
 
   return (
     <Container>
@@ -144,20 +193,39 @@ const HomeChatContainer = () => {
           <p>{chatRoomDetail?.name}</p>
           <div>
             <div className="active" />
-            <p>{chatRoomDetail?.chatUserCnt} users</p>
+            <p>{chatRoomDetail?.roomUserCnt} users</p>
           </div>
         </MessageText>
       </Header>
-      <Chat messages={messages} />{" "}
-      {/* 수정된 부분: messages가 올바르게 전달되는지 확인 */}
+      <Chat messages={messages} />
       <InputContainer>
+        {isCommand && inputValue.startsWith("/끝말잇기") && (
+          <WordRelayGameRule>
+            Tip !
+            <br />
+            처음 시작 시
+            <b>
+              <br /> /끝말잇기 ![제시 단어]
+            </b>
+            <br />
+            형태로 입력해주세요!
+          </WordRelayGameRule>
+        )}
+        {isCommand && (
+          <CommandDisplay>
+            {inputValue.startsWith("/학식") ? "/학식" : "/끝말잇기"}
+          </CommandDisplay>
+        )}
         <Input
           type="text"
           placeholder="메시지를 입력해주세요"
           value={inputValue}
-          onChange={(e) => setInputValue(e.target.value)}
+          onChange={handleChange}
+          onKeyPress={handleKeyPress}
+          isCommand={isCommand}
+          disabled={lunchLoading} // 입력 필드 비활성화
         />
-        <SendButton onClick={handleSendMessage}>
+        <SendButton onClick={handleSendMessage} disabled={lunchLoading}>
           <SendIcon icon={faPaperPlane} inputLength={inputValue.length} />
         </SendButton>
       </InputContainer>

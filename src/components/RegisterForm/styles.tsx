@@ -28,6 +28,7 @@ export const CloseButtonWrap = styled.div`
   > button {
     background: none;
     border: none;
+    cursor: pointer;
   }
 `;
 
@@ -44,8 +45,8 @@ export const CheckButton = styled.button`
   height: 60px;
   margin-left: 12px;
   background-color: #ffffff;
-  color: #00a6dd;
-  border: 1px solid #00a6dd;
+  color: #a8866b;
+  border: 1px solid #a8866b;
   border-radius: 10px;
   cursor: pointer;
   font-size: 18px;
@@ -54,7 +55,7 @@ export const CheckButton = styled.button`
   align-items: center;
   padding: 10px 5px;
   &:hover {
-    background-color: #00a6dd;
+    background-color: #a8866b;
     color: white;
   }
 `;
@@ -100,7 +101,7 @@ export const Input = styled.input`
 // DAELIM CHAT
 export const Title = styled.h1`
   font-size: 1.5em;
-  color: #00a6dd;
+  color: #a8866b;
   margin-bottom: 40px;
 `;
 
