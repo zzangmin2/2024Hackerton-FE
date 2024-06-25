@@ -27,7 +27,6 @@ import useWebSocket from "../../hook/useWebSocket";
 import useCheckLunchKeyword from "../../hook/useCheckLunchKeyword";
 import useCheckWordRelayGame from "../../hook/useCheckWordRelayGame";
 import useCreateMessage from "../../hook/useCreateMessage";
-
 const HomeChatContainer = () => {
   const { roomIndex } = useParams();
   const [roomInfo, setRoomInfo] = useState<ChatRoomItemType | null>(null);
@@ -51,7 +50,7 @@ const HomeChatContainer = () => {
   const sessionId = useMemo(() => localStorage.getItem("chatBoxSessionId"), []);
   const userName = useMemo(() => localStorage.getItem("chatBoxUserName"), []);
 
-  const { messages, sendMessage, setMessages } = useWebSocket(
+  const { messages, sendMessage, setMessages, loading, error } = useWebSocket(
     "ws://localhost:8080/ws/chat",
     roomInfo?.roomId || null
   );
@@ -137,7 +136,7 @@ const HomeChatContainer = () => {
     };
 
     checkFirstEntry();
-  }, [roomInfo, userName, sendMessage, isFirstEntry]);
+  }, [roomInfo, userName, sendMessage, isFirstEntry, createMessage]);
 
   const handleSendMessage = useCallback(async () => {
     if (inputValue.trim() === "") return;
@@ -178,6 +177,14 @@ const HomeChatContainer = () => {
     },
     [handleSendMessage]
   );
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
 
   return (
     <Container>

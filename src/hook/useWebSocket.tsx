@@ -3,6 +3,8 @@ import { wsMessage } from "../typings/db";
 
 const useWebSocket = (url: string, roomId: string | null) => {
   const [messages, setMessages] = useState<wsMessage[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
   const webSocket = useRef<WebSocket | null>(null);
 
   useEffect(() => {
@@ -11,6 +13,8 @@ const useWebSocket = (url: string, roomId: string | null) => {
 
     webSocket.current.onopen = () => {
       console.log("WebSocket connected");
+      setLoading(false);
+      setError(null);
     };
 
     webSocket.current.onmessage = (event) => {
@@ -27,10 +31,13 @@ const useWebSocket = (url: string, roomId: string | null) => {
 
     webSocket.current.onclose = () => {
       console.log("WebSocket disconnected");
+      setLoading(true);
     };
 
     webSocket.current.onerror = (error) => {
-      console.log("WebSocket error:", error);
+      console.error("WebSocket error:", error);
+      setError("WebSocket connection error");
+      setLoading(true);
     };
 
     return () => {
@@ -49,7 +56,7 @@ const useWebSocket = (url: string, roomId: string | null) => {
     }
   };
 
-  return { messages, sendMessage, setMessages };
+  return { messages, sendMessage, setMessages, loading, error };
 };
 
 export default useWebSocket;
