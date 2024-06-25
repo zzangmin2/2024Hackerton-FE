@@ -57,7 +57,7 @@ const HomeChatContainer = () => {
   );
 
   const createMessage = useCreateMessage(roomInfo, userName);
-  const checkLunchKeyword = useCheckLunchKeyword(
+  const { checkLunchKeyword, loading: lunchLoading } = useCheckLunchKeyword(
     roomInfo,
     userName,
     sendMessage
@@ -69,6 +69,13 @@ const HomeChatContainer = () => {
     wordRelayGameState,
     setWordRelayGameState
   );
+
+  useEffect(() => {
+    if (lunchLoading) {
+      setInputValue("");
+      setInputValue("학식을 가져오는 중 ..");
+    }
+  }, [lunchLoading]);
 
   useEffect(() => {
     const loadChatInfo = async (roomIdx: number) => {
@@ -209,8 +216,9 @@ const HomeChatContainer = () => {
           onChange={handleChange}
           onKeyPress={handleKeyPress}
           isCommand={isCommand}
+          disabled={lunchLoading} // 입력 필드 비활성화
         />
-        <SendButton onClick={handleSendMessage}>
+        <SendButton onClick={handleSendMessage} disabled={lunchLoading}>
           <SendIcon icon={faPaperPlane} inputLength={inputValue.length} />
         </SendButton>
       </InputContainer>
