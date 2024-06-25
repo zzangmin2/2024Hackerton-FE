@@ -1,8 +1,16 @@
-import { useMemo } from "react";
+import { useContext, useMemo } from "react";
 import { GreetingContainer, GreetingText } from "./styles";
+import { ModalContext } from "../../App";
 
 const HomeGreetingContainer = () => {
   const userName = useMemo(() => localStorage.getItem("chatBoxUserName"), []);
+
+  // modalContext 가져오기
+  const modalContext = useContext(ModalContext);
+  if (!modalContext) {
+    throw new Error("ModalContext.Provider 없음");
+  }
+  const { setModal } = modalContext;
 
   return (
     <>
@@ -26,7 +34,7 @@ const HomeGreetingContainer = () => {
           <p>
             혹시 원하는 채팅방이 없으신가요?
             <br />
-            <a href="/create-chat-room">채팅방 만들기</a>
+            <a onClick={() => setModal(true)}>채팅방 만들기</a>
           </p>
         </GreetingText>
       </GreetingContainer>

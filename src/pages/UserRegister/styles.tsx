@@ -42,25 +42,6 @@ export const Input = styled.input`
   }
 `;
 
-// // 시작하기 버튼
-// export const Button = styled.button`
-//   width: 386px;
-//   height: 60px;
-//   background-color: #00a6dd;
-//   color: white;
-//   border-radius: 10px;
-//   cursor: pointer;
-//   font-size: 18px;
-//   display: flex;
-//   justify-content: center;
-//   align-items: center;
-//   font-weight: 700;
-//   &:hover {
-//     background-color: #0056b3;
-//   }
-//   aria-label: "시작하기";
-// `;
-
 export const Title = styled.h1`
   font-size: 1.5em;
   color: #a8866b;

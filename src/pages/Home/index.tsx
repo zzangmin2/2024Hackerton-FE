@@ -21,10 +21,11 @@ import {
 } from "../../App";
 import axios from "axios";
 import { ChatRoomItemType } from "../../typings/db";
-import { Outlet, useNavigate } from "react-router-dom";
+import { Outlet, useNavigate, useParams } from "react-router-dom";
 import Gravatar from "react-gravatar";
 
 const Home = () => {
+  const { roomIndex } = useParams();
   const navigate = useNavigate();
   // const [userName, setUserName] = useState<string>();
   const userName = useMemo(() => localStorage.getItem("chatBoxUserName"), []);
@@ -77,13 +78,13 @@ const Home = () => {
   const handleNavigation = (callback: () => void) => {
     if (chatRoomDetail.roomId.length >= 1) {
       const confirmLeave = window.confirm("채팅방을 나가시겠습니까?");
+      if (!confirmLeave) return;
       setChatRoomDetail({
         roomId: "",
         name: "",
         roomUserCnt: 0,
         chatUserCnt: [],
       });
-      if (!confirmLeave) return;
     }
     callback();
   };
@@ -99,26 +100,25 @@ const Home = () => {
             </Title>
             <Subtitle>MY PROFILE</Subtitle>
             <Profile onClick={() => handleNavigation(() => navigate("/intro"))}>
-              <Gravatar email={userName} size={40} default="retro" />
+              {userName && (
+                <Gravatar email={userName} size={40} default="retro" />
+              )}
+
               <p>{userName}</p>
             </Profile>
             <Subtitle>CURRENT CHAT ROOM LIST</Subtitle>
             <ChatRoomList>
-              {chatRoomList.map((item: ChatRoomItemType) => (
+              {chatRoomList.map((item: ChatRoomItemType, idx) => (
                 <ChatRoomItem
                   key={item.roomId}
-                  onClick={() =>
+                  onClick={() => {
+                    if (roomIndex && idx == parseInt(roomIndex)) {
+                      return;
+                    }
                     handleNavigation(() => {
-                      const roomIndex = chatRoomList.findIndex(
-                        (room) => room.roomId === item.roomId
-                      );
-                      if (roomIndex !== -1) {
-                        navigate(`/chat/${roomIndex}`);
-                      } else {
-                        console.error("roomId를 찾을 수 없습니다");
-                      }
-                    })
-                  }
+                      navigate(`/chat/${idx}`);
+                    });
+                  }}
                 >
                   <div>
                     <p className="chatRoomItemTitle">{item.name}</p>

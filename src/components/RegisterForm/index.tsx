@@ -43,9 +43,14 @@ const RegisterForm: React.FC<HomeProps> = ({
         <InputRow>
           <Input
             type="text"
+            placeholder={placeholder}
             value={value}
             onChange={(e) => setValue(e.target.value)}
-            placeholder={placeholder}
+            onKeyPress={(e) => {
+              if (e.key === "Enter") {
+                handleSubmit(e as unknown as React.FormEvent<HTMLFormElement>);
+              }
+            }}
           />
           {/* <CheckButton onClick={handleCheckUsername}>중복확인</CheckButton> */}
         </InputRow>

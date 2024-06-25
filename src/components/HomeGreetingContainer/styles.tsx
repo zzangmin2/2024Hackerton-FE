@@ -32,5 +32,6 @@ export const GreetingText = styled.div`
     color: #a8866b; // 링크 색상
     font-weight: bold; // 글자 굵기 설정
     text-decoration: underline;
+    cursor: pointer;
   }
 `;

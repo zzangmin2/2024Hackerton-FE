@@ -28,6 +28,7 @@ export const CloseButtonWrap = styled.div`
   > button {
     background: none;
     border: none;
+    cursor: pointer;
   }
 `;
 
